@@ -6,7 +6,8 @@
         <entry key="app/src/main/res/drawable/ic_baseline_api_24.xml" value="0.1335" />
         <entry key="app/src/main/res/layout/activity_game.xml" value="0.15070921985815602" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.15806159420289856" />
-        <entry key="app/src/main/res/layout/fragment_board.xml" value="0.15520833333333334" />
+        <entry key="app/src/main/res/layout/fragment_board.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_moves.xml" value="0.15806159420289856" />
         <entry key="app/src/main/res/menu/button_nav_menu.xml" value="0.30512820512820515" />
       </map>
     </option>
