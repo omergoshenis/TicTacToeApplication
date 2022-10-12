@@ -18,21 +18,22 @@ data class LogicAPI(val board: Board, val game: Game) {
         return Triple(isValid, playerHasWon, gameOver)
     }
 
-    fun CompleteComputerTurn(player: Player) : Pair<Int, Triple<Boolean,Boolean,Boolean>> {
-        var (isValid, cell) = MakeComputerMove(player.symbol)
+    fun CompleteComputerTurn(player: Player) : Triple<Int,Boolean,Boolean> {
+        var cell = MakeComputerMove(player.symbol)
         var playerHasWon: Boolean = checkWin()
         var gameOver: Boolean = checkIfGameIsOver()
-        return Pair(cell, Triple(isValid, playerHasWon, gameOver))
+        return Triple(cell, playerHasWon, gameOver)
     }
 
-    fun MakeComputerMove(symbol: Char): Pair<Boolean, Int>{
+    fun MakeComputerMove(symbol: Char): Int{
         var cell = getComputerCell()
         var validMove: Boolean = gameBoard.checkValidMove(cell)
         while(validMove == false){
             cell = getComputerCell()
             validMove = gameBoard.checkValidMove(cell)
         }
-        return Pair(validMove, cell)
+        gameBoard.changeCell(cell, symbol)
+        return cell
     }
 
     fun getComputerCell() : Int{
