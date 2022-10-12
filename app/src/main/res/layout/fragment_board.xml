@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="BoardFragment"
+            type="com.example.tictactoeapplication.BoardFragment"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".BoardFragment">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout style="@style/row">
+
+                <ImageButton
+                    android:id="@+id/cell1"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(1)}" />
+
+                <View style="@style/verticalLine" />
+
+                <ImageButton
+                    android:id="@+id/cell2"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(2)}" />
+
+                <View style="@style/verticalLine" />
+
+                <ImageButton
+                    android:id="@+id/cell3"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(3)}" />
+
+            </LinearLayout>
+
+            <View style="@style/horizontalLine" />
+
+            <LinearLayout style="@style/row">
+
+                <ImageButton
+                    android:id="@+id/cell4"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(4)}" />
+
+                <View style="@style/verticalLine" />
+
+                <ImageButton
+                    android:id="@+id/cell5"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(5)}" />
+
+                <View style="@style/verticalLine" />
+
+                <ImageButton
+                    android:id="@+id/cell6"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(6)}" />
+
+            </LinearLayout>
+
+            <View style="@style/horizontalLine" />
+
+
+            <LinearLayout style="@style/row">
+
+                <ImageButton
+                    android:id="@+id/cell7"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(7)}" />
+
+                <View style="@style/verticalLine" />
+
+                <ImageButton
+                    android:id="@+id/cell8"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(8)}" />
+
+                <View style="@style/verticalLine" />
+
+                <ImageButton
+                    android:id="@+id/cell9"
+                    style="@style/column"
+                    android:onClick="@{()->BoardFragment.boardTapped(9)}" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/suggest_move_button"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:text="Suggest Move"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/round_corner_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

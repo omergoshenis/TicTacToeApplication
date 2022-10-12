@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">TicTacToeApplication</string>
+    <string name="player_vs_ai">Player Vs. AI</string>
+    <string name="player_vs_player">Player Vs. Player</string>
+    <string name="Board">Board</string>
+    <string name="Moves">Moves</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="line_1">line 1</string>
+    <string name="line_2">line 2</string>
+</resources>
