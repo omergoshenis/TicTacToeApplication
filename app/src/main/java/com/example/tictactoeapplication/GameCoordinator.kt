@@ -100,6 +100,12 @@ class GameCoordinator(gameState: Int, boardFragment: BoardFragment) {
         }
     }
 
+    fun boardToString(): String {
+        return "${board.gameBoard[1]}${board.gameBoard[2]}${board.gameBoard[3]}" +
+                "${board.gameBoard[4]}${board.gameBoard[5]}${board.gameBoard[6]}" +
+                "${board.gameBoard[7]}${board.gameBoard[8]}${board.gameBoard[9]}"
+
+    }
     companion object {
         const val PLAYER_VS_PLAYER = 1
         const val PLAYER_VS_AI = 2

@@ -1,18 +1,25 @@
 package com.example.tictactoeapplication
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.tictactoeapplication.R
 import android.widget.Button
-import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.findNavController
 import com.example.tictactoeapplication.databinding.FragmentBoardBinding
+import com.example.tictactoeapplication.network.ConnectivityUtils
+import com.example.tictactoeapplication.network.RetrofitAux
+import com.example.tictactoeapplication.network.SuggestionAPI
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Calendar.getInstance
 import kotlin.system.exitProcess
 
@@ -20,11 +27,11 @@ import kotlin.system.exitProcess
 class BoardFragment : Fragment() {
     lateinit var binding: FragmentBoardBinding
     lateinit var gameCoordinator: GameCoordinator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,9 +53,13 @@ class BoardFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.boardFragment = this
+        view.findViewById<Button>(R.id.suggest_move_button).setOnClickListener{
+            suggestMove(it)
+        }
     }
 
 
@@ -80,4 +91,50 @@ class BoardFragment : Fragment() {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun suggestMove(click: View) {
+        val suggestionApi = RetrofitAux.getInstance().create(SuggestionAPI::class.java)
+        if (gameCoordinator.keepPlaying) {
+            Log.i("suggestMove", "next line is checking connectivity")
+
+            if (!ConnectivityUtils.checkConnectivity(activity as Context)) {
+                Log.i("suggestMove", "no connectivity")
+                activity?.runOnUiThread(java.lang.Runnable {
+                    Toast.makeText(
+                        activity,
+                        "Not available. There is no network.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                })
+            }
+            Log.i("suggestMove", "skip no connectivity - so there is connecticiy(?)")
+
+
+            GlobalScope.launch {
+                val result = suggestionApi.getBestMove(
+                    gameCoordinator.boardToString(),
+                    gameCoordinator.currentPlayer.symbol.toString()
+                )
+
+                if (result.isSuccessful) { //TODO result.isScucess
+                    Log.d("ayush", result.body().toString())
+                    val nextRecommendation = result.body()?.recommendation?.plus(1)
+
+                    launch(Dispatchers.Main) {
+                        Toast.makeText(
+                            activity,
+                            "Next best move is: $nextRecommendation",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+                else
+                    Toast.makeText(
+                        activity,
+                        "Error! Check your connectivity and try again!",
+                        Toast.LENGTH_LONG
+                    ).show()
+            }
+        }
+    }
 }
