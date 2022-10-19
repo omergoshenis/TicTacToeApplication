@@ -15,8 +15,11 @@ data class SingleGame(
     @ColumnInfo(name = "current_player")
     var currentPlayer: Int = -1,
 
+    @ColumnInfo(name = "game_over")
+    var gameOver: Boolean = false,
+
     @ColumnInfo(name = "board_state")
-    var boardState: String = emptyBoard){
+    var boardState: String = emptyBoard) {
     companion object{
         var emptyBoard: String = "---------"
     }

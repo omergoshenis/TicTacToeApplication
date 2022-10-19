@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
@@ -20,7 +19,6 @@ import com.example.tictactoeapplication.network.SuggestionAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.Calendar.getInstance
 import kotlin.system.exitProcess
 
 
@@ -112,7 +110,7 @@ class BoardFragment : Fragment() {
 
             GlobalScope.launch {
                 val result = suggestionApi.getBestMove(
-                    gameCoordinator.boardToString(),
+                    gameCoordinator.convertBoardToString(),
                     gameCoordinator.currentPlayer.symbol.toString()
                 )
 
