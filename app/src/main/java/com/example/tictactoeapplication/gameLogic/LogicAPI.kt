@@ -1,4 +1,4 @@
-package gameLogic
+package com.example.tictactoeapplication.gameLogic
 
 import Board
 import Game

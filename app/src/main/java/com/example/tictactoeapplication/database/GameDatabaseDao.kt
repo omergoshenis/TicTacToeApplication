@@ -1,9 +1,11 @@
 package com.example.tictactoeapplication.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GameDatabaseDao {
@@ -22,4 +24,7 @@ interface GameDatabaseDao {
 
     @Query("SELECT * FROM game_table ORDER BY gameId DESC LIMIT 1")
     suspend fun getCurrGame(): SingleGame?
+
+    @Query("SELECT * FROM game_table ORDER BY gameId DESC")
+    fun getAllGames() : LiveData<List<SingleGame>>
 }

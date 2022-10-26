@@ -6,6 +6,9 @@
         <variable
             name="BoardFragment"
             type="com.example.tictactoeapplication.BoardFragment"/>
+        <variable
+            name="boardViewModel"
+            type="com.example.tictactoeapplication.viewModel.BoardViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

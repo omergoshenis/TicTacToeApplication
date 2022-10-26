@@ -2,21 +2,9 @@ package com.example.tictactoeapplication
 import Board
 import ComputerPlayer
 import Game
-import GameManager
 import HumanPlayer
 import Player
-import PlayerVsPlayer
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.util.Log
-import android.widget.Toast
-import com.example.tictactoeapplication.R
-import com.example.tictactoeapplication.BoardFragment
-import gameLogic.LogicAPI
-import gameLogic.LogicAPI.Companion.PLAYER_VS_AI
-import gameLogic.LogicAPI.Companion.PLAYER_VS_PLAYER
-import kotlin.system.exitProcess
+import com.example.tictactoeapplication.gameLogic.LogicAPI
 
 class GameCoordinator(gameState: Int, boardFragment: BoardFragment) {
     val gameState = gameState
@@ -41,7 +29,7 @@ class GameCoordinator(gameState: Int, boardFragment: BoardFragment) {
         currentPlayer = player1
     }
 
-    fun TogglePlayer() {
+    fun togglePlayer() {
         if (currentPlayer == player1) {
             currentPlayer = player2
         } else { // currentPlayer= player2
@@ -51,7 +39,7 @@ class GameCoordinator(gameState: Int, boardFragment: BoardFragment) {
 
     fun boardTapped(cell: Int) {
         val (makeMove, EndWithWin, EndWithTie) = logicAPI.CompleteTurn(cell, currentPlayer)
-        var imgID = getImageID(currentPlayer)
+        val imgID = getImageID(currentPlayer)
         if (!makeMove) {
             return
         } else {
@@ -68,16 +56,16 @@ class GameCoordinator(gameState: Int, boardFragment: BoardFragment) {
                     boardFragment.showTie()
                 }
             }
-            TogglePlayer()
+            togglePlayer()
             if (gameState == PLAYER_VS_AI && currentPlayer == player2) {
                 playComputerTurn()
             }
         }
     }
 
-    fun playComputerTurn() {
+    private fun playComputerTurn() {
         val (cell, EndWithWin, EndWithTie) = logicAPI.CompleteComputerTurn(currentPlayer)
-        var imgID = getImageID(currentPlayer)
+        val imgID = getImageID(currentPlayer)
         if (keepPlaying) {
             boardFragment.setCell(cell, imgID)
             if (EndWithWin) {
@@ -89,10 +77,10 @@ class GameCoordinator(gameState: Int, boardFragment: BoardFragment) {
                 boardFragment.showTie()
             }
         }
-        TogglePlayer()
+        togglePlayer()
     }
 
-    fun getImageID(player: Player): Int {
+    private fun getImageID(player: Player): Int {
         if (player.symbol == X_SIGN) {
             return R.drawable.x_sign
         } else {

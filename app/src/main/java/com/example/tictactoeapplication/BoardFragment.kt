@@ -12,10 +12,14 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import com.example.tictactoeapplication.database.GameDatabase
 import com.example.tictactoeapplication.databinding.FragmentBoardBinding
 import com.example.tictactoeapplication.network.ConnectivityUtils
 import com.example.tictactoeapplication.network.RetrofitAux
 import com.example.tictactoeapplication.network.SuggestionAPI
+import com.example.tictactoeapplication.viewModel.BoardViewModel
+import com.example.tictactoeapplication.viewModel.BoardViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -41,13 +45,21 @@ class BoardFragment : Fragment() {
         if(gameType!=null){
             gameCoordinator = GameCoordinator(gameType, this)
             gameCoordinator.setPlayers()
-            // boardTapped(1)
         }
         else{
             exitProcess(-1)
         }
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_board, container, false)
+
+        val application = requireNotNull(this.activity).application
+        val dataSource = GameDatabase.getInstance(application).gameDataBaseDao
+        val viewModelFactory = BoardViewModelFactory(dataSource, application, gameType)
+        val boardViewModel = ViewModelProvider(this, viewModelFactory).get(BoardViewModel::class.java)
+
+        binding.boardViewModel = boardViewModel
+        binding.lifecycleOwner = this
+
         return binding.root
     }
 
@@ -59,7 +71,6 @@ class BoardFragment : Fragment() {
             suggestMove(it)
         }
     }
-
 
     fun setCell(cell: Int, imgId: Int){
         when(cell){

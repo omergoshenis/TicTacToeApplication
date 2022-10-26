@@ -4,22 +4,18 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.tictactoeapplication.database.GameDatabase
 import com.example.tictactoeapplication.database.GameDatabaseDao
 
-class BoardViewModelFactory(
+class MainActivityViewModelFactory(
     private val dataSource: GameDatabaseDao,
-    private val application: Application, gameState: Int) : ViewModelProvider.Factory {
-
-    val _gameState: Int = gameState
-
+    private val application: Application) :
+    ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(BoardViewModel::class.java)) {
-            return BoardViewModel(dataSource, application, _gameState) as T
+        if (modelClass.isAssignableFrom(MainActivityViewModel::class.java)) {
+            return MainActivityViewModel(dataSource, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 
 }
-
