@@ -116,7 +116,7 @@ class BoardFragment : Fragment() {
                     gameCoordinator.currentPlayer.symbol.toString()
                 )
 
-                if (result.isSuccessful) { //TODO result.isScucess
+                if (result.isSuccessful) {
                     Log.d("ayush", result.body().toString())
                     val nextRecommendation = result.body()?.recommendation?.plus(1)
 

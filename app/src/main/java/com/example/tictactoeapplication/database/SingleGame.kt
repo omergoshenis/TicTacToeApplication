@@ -18,6 +18,12 @@ data class SingleGame(
     @ColumnInfo(name = "board_state")
     var boardState: String = emptyBoard){
 
+    fun copy(
+        gameState: Int = this.gameState,
+        currentPlayer: Int = this.currentPlayer,
+        boardState: String = this.boardState
+    )=SingleGame(gameId,gameState,currentPlayer,boardState)
+
     companion object{
         var emptyBoard: String = "---------"
     }
