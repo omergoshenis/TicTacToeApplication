@@ -12,7 +12,7 @@ class GameRepository(private val databaseDao: GameDatabaseDao) {
     suspend fun getLastGameData(): SingleGame{
         var lastGame = databaseDao.getCurrGame()
         if(lastGame==null){
-            val currGame = SingleGame(0 , -1, -1, SingleGame.emptyBoard)
+            val currGame = SingleGame(0 , -1, "", SingleGame.emptyBoard)
             lastGame= currGame
         }
         return lastGame

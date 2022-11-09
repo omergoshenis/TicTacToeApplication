@@ -13,14 +13,14 @@ data class SingleGame(
     var gameState: Int = -1,
 
     @ColumnInfo(name = "current_player")
-    var currentPlayer: Int = -1,
+    var currentPlayer: String = "",
 
     @ColumnInfo(name = "board_state")
     var boardState: String = emptyBoard){
 
     fun copy(
         gameState: Int = this.gameState,
-        currentPlayer: Int = this.currentPlayer,
+        currentPlayer: String = this.currentPlayer,
         boardState: String = this.boardState
     )=SingleGame(gameId,gameState,currentPlayer,boardState)
 
