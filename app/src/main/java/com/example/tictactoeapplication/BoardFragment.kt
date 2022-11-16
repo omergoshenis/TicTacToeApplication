@@ -34,11 +34,6 @@ class BoardFragment : Fragment() {
         BoardFragmentViewModelFactory(((activity?.application) as TicTacToeApp).repository)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,25 +41,25 @@ class BoardFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_board, container, false)
 
+
         val gameType = arguments?.getInt("gameState", 0)
         Log.i("Board frag", "player type is: $gameType")
         if(gameType!=null){
-            gameCoordinator = GameCoordinator(gameType, this)
-            gameCoordinator.setPlayers()
-//            when(gameType){
-//                1->{
-//                    Log.i("Board frag", "player vs player")
-//                    boardFragmentViewModel.gameType = 1
-//                    boardFragmentViewModel.setPlayers()
-//
-//                }
-//                2->{
-//                    Log.i("Board frag", "player vs AI")
-//                    boardFragmentViewModel.gameType = 2
-//                    boardFragmentViewModel.setPlayers()
-//                }
-//                else -> return null
-//            }
+//            gameCoordinator = GameCoordinator(gameType, this)
+//            gameCoordinator.setPlayers()
+            boardFragmentViewModel.clear()
+            when(gameType){
+                1->{
+                    boardFragmentViewModel.gameType = 1
+                    boardFragmentViewModel.setPlayers()
+
+                }
+                2->{
+                    boardFragmentViewModel.gameType = 2
+                    boardFragmentViewModel.setPlayers()
+                }
+                else -> return null
+            }
         }
         else{
             exitProcess(-1)
@@ -81,22 +76,26 @@ class BoardFragment : Fragment() {
             suggestMove(it)
         }
 
-        //boardFragmentViewModel.singleGame.observe(viewLifecycleOwner, Observer(::updateUI))
+        boardFragmentViewModel.singleGame.observe(viewLifecycleOwner, Observer(::updateUI))
     }
 
     private fun updateUI(singleGame: SingleGame){
-        if(boardFragmentViewModel.keepPlaying){
-            updateBoardUI(singleGame.boardState)
-        }
-        else{
+        updateBoardUI(singleGame.boardState)
+        if(boardFragmentViewModel.gameOverToDB){
             Toast.makeText(activity, "${boardFragmentViewModel.gameOverMessage}", Toast.LENGTH_SHORT).show()
         }
     }
 
     fun updateBoardUI(boardString: String){
-        var imgId: Int = boardFragmentViewModel.getImageID(boardFragmentViewModel.currentPlayer)
-        for(i in 0..8){
-            if(boardString[i]!='-'){
+        var imgId: Int
+        for(i in 1..9){
+            if(boardString[i-1]!='-'){
+                if(boardString[i-1]=='X'){
+                    imgId = R.drawable.x_sign
+                }
+                else{
+                    imgId = R.drawable.o_sign
+                }
                 setCell(i, imgId)
             }
         }
@@ -117,8 +116,8 @@ class BoardFragment : Fragment() {
     }
 
     fun boardTapped(cell: Int){
-        gameCoordinator.boardTapped(cell)
-        //boardFragmentViewModel.boardTapped(cell)
+        //gameCoordinator.boardTapped(cell)
+        boardFragmentViewModel.boardTapped(cell)
     }
 
     fun showWinner(symbol: Char){
@@ -130,6 +129,7 @@ class BoardFragment : Fragment() {
         val text = "Tie!"
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun suggestMove(click: View) {

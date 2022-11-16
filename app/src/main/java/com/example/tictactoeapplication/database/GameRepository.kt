@@ -9,6 +9,14 @@ class GameRepository(private val databaseDao: GameDatabaseDao) {
         databaseDao.insertNewGame(singleGame)
     }
 
+    suspend fun clear(){
+        databaseDao.clear()
+    }
+
+    suspend fun update(singleGame: SingleGame){
+        databaseDao.updateGame(singleGame)
+    }
+
     suspend fun getLastGameData(): SingleGame{
         var lastGame = databaseDao.getCurrGame()
         if(lastGame==null){
@@ -17,4 +25,6 @@ class GameRepository(private val databaseDao: GameDatabaseDao) {
         }
         return lastGame
     }
+
+
 }

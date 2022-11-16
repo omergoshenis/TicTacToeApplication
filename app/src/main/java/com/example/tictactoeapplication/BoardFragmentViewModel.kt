@@ -27,6 +27,7 @@ class BoardFragmentViewModel(private val repository: GameRepository): ViewModel(
     var keepPlaying: Boolean = true
     lateinit var gameOverMessage: String
 
+    var gameOverToDB: Boolean = false
     lateinit var currPlayerToDB : String
     lateinit var boardStateToDB : String
 
@@ -65,32 +66,33 @@ class BoardFragmentViewModel(private val repository: GameRepository): ViewModel(
     }
 
     fun boardTapped(cell: Int) {
-        val (makeMove, EndWithWin, EndWithTie) = logicAPI.CompleteTurn(cell, currentPlayer)
+        val (makeMove, endWithWin, endWithTie) = logicAPI.CompleteTurn(cell, currentPlayer)
         var imgID = getImageID(currentPlayer)
+        gameOverToDB = endWithTie || endWithWin
         if (!makeMove) {
             return
         } else {
             if (keepPlaying) {
+                if (endWithWin) {
+                    keepPlaying = false
+                    gameOverMessage = "Player ${currentPlayer.symbol} Win!"
+                    //boardFragment.showWinner(currentPlayer.symbol)
+                }
+                if (!endWithWin && endWithTie) {
+                    keepPlaying = false
+                    gameOverMessage = "its A Tie!"
+                    //boardFragment.showTie()
+                }
                 if (makeMove) {
                     Log.i("boardTapped", "make a move")
                     currPlayerToDB = attachCurrPlayer()
                     boardStateToDB = boardToString()
-                    val updatedGame = singleGame.value?.copy(currentPlayer = currPlayerToDB, gameState = gameType, boardState = boardStateToDB)
+                    val updatedGame = singleGame.value?.copy(currentPlayer = currPlayerToDB, gameState = gameType, boardState = boardStateToDB, gameOver = gameOverToDB)
                     if(updatedGame!=null){
                         insert(updatedGame)
                         _singleGame.value = updatedGame!!
                     }
                     //boardFragment.setCell(cell, imgID)
-                }
-                if (EndWithWin) {
-                    keepPlaying = false
-                    gameOverMessage = "Player ${currentPlayer.symbol} Win!"
-                    //boardFragment.showWinner(currentPlayer.symbol)
-                }
-                if (!EndWithWin && EndWithTie) {
-                    keepPlaying = false
-                    gameOverMessage = "its A Tie!"
-                    //boardFragment.showTie()
                 }
             }
             TogglePlayer()
@@ -162,5 +164,11 @@ class BoardFragmentViewModel(private val repository: GameRepository): ViewModel(
                 "${board.gameBoard[4]}${board.gameBoard[5]}${board.gameBoard[6]}" +
                 "${board.gameBoard[7]}${board.gameBoard[8]}${board.gameBoard[9]}"
 
+    }
+
+    fun clear(){
+        viewModelScope.launch {
+            repository.clear()
+        }
     }
 }
