@@ -103,27 +103,28 @@ class BoardFragmentViewModel(private val repository: GameRepository): ViewModel(
     }
 
     fun playComputerTurn() {
-        val (cell, EndWithWin, EndWithTie) = logicAPI.CompleteComputerTurn(currentPlayer)
+        val (cell, endWithWin, endWithTie) = logicAPI.CompleteComputerTurn(currentPlayer)
         var imgID = getImageID(currentPlayer)
         if (keepPlaying) {
             //boardFragment.setCell(cell, imgID)
             Log.i("playComputerTurn", "make a move")
             currPlayerToDB = attachCurrPlayer()
             boardStateToDB = boardToString()
-            val updatedGame = singleGame.value?.copy(currentPlayer = currPlayerToDB, gameState = gameType, boardState = boardStateToDB)
-            if(updatedGame!=null){
-                insert(updatedGame)
-                _singleGame.value = updatedGame!!
-            }
-            if (EndWithWin) {
+            gameOverToDB = endWithTie || endWithWin
+            val updatedGame = singleGame.value?.copy(currentPlayer = currPlayerToDB, gameState = gameType, boardState = boardStateToDB, gameOver = gameOverToDB)
+            if (endWithWin) {
                 keepPlaying = false
                 gameOverMessage = "Player ${currentPlayer.symbol} Win!"
                 //boardFragment.showWinner(currentPlayer.symbol)
             }
-            if (!EndWithWin && EndWithTie) {
+            if (!endWithWin && endWithTie) {
                 keepPlaying = false
                 gameOverMessage = "its A Tie!"
                 //boardFragment.showTie()
+            }
+            if(updatedGame!=null){
+                insert(updatedGame)
+                _singleGame.value = updatedGame!!
             }
         }
         TogglePlayer()
