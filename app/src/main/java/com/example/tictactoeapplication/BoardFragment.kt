@@ -13,6 +13,9 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import com.example.tictactoeapplication.database.SingleGame
 import com.example.tictactoeapplication.databinding.FragmentBoardBinding
 import com.example.tictactoeapplication.network.ConnectivityUtils
 import com.example.tictactoeapplication.network.RetrofitAux
@@ -27,29 +30,41 @@ import kotlin.system.exitProcess
 class BoardFragment : Fragment() {
     lateinit var binding: FragmentBoardBinding
     lateinit var gameCoordinator: GameCoordinator
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    private val boardFragmentViewModel: BoardFragmentViewModel by viewModels {
+        BoardFragmentViewModelFactory(((activity?.application) as TicTacToeApp).repository)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_board, container, false)
+
 
         val gameType = arguments?.getInt("gameState", 0)
         Log.i("Board frag", "player type is: $gameType")
         if(gameType!=null){
-            gameCoordinator = GameCoordinator(gameType, this)
-            gameCoordinator.setPlayers()
-            // boardTapped(1)
+//            gameCoordinator = GameCoordinator(gameType, this)
+//            gameCoordinator.setPlayers()
+            boardFragmentViewModel.clear()
+            when(gameType){
+                1->{
+                    boardFragmentViewModel.gameType = 1
+                    boardFragmentViewModel.setPlayers()
+
+                }
+                2->{
+                    boardFragmentViewModel.gameType = 2
+                    boardFragmentViewModel.setPlayers()
+                }
+                else -> return null
+            }
         }
         else{
             exitProcess(-1)
         }
-        // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_board, container, false)
+
         return binding.root
     }
 
@@ -60,8 +75,31 @@ class BoardFragment : Fragment() {
         view.findViewById<Button>(R.id.suggest_move_button).setOnClickListener{
             suggestMove(it)
         }
+
+        boardFragmentViewModel.singleGame.observe(viewLifecycleOwner, Observer(::updateUI))
     }
 
+    private fun updateUI(singleGame: SingleGame){
+        updateBoardUI(singleGame.boardState)
+        if(boardFragmentViewModel.gameOverToDB){
+            Toast.makeText(activity, "${boardFragmentViewModel.gameOverMessage}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun updateBoardUI(boardString: String){
+        var imgId: Int
+        for(i in 1..9){
+            if(boardString[i-1]!='-'){
+                if(boardString[i-1]=='X'){
+                    imgId = R.drawable.x_sign
+                }
+                else{
+                    imgId = R.drawable.o_sign
+                }
+                setCell(i, imgId)
+            }
+        }
+    }
 
     fun setCell(cell: Int, imgId: Int){
         when(cell){
@@ -78,18 +116,20 @@ class BoardFragment : Fragment() {
     }
 
     fun boardTapped(cell: Int){
-        gameCoordinator.boardTapped(cell)
+        //gameCoordinator.boardTapped(cell)
+        boardFragmentViewModel.boardTapped(cell)
     }
 
     fun showWinner(symbol: Char){
-        var text = "player $symbol Won!"
+        val text = "player $symbol Won!"
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     fun showTie(){
-        var text = "Tie!"
+        val text = "Tie!"
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun suggestMove(click: View) {
@@ -116,7 +156,7 @@ class BoardFragment : Fragment() {
                     gameCoordinator.currentPlayer.symbol.toString()
                 )
 
-                if (result.isSuccessful) { //TODO result.isScucess
+                if (result.isSuccessful) {
                     Log.d("ayush", result.body().toString())
                     val nextRecommendation = result.body()?.recommendation?.plus(1)
 
